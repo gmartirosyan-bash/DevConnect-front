@@ -1,0 +1,98 @@
+import { useContext, useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import loginApi from '../api/login'
+import { AppContext } from '../context/AppContext'
+import handleApiError from '../utils/handleApiError'
+import CustomAlert from '../components/CustomAlert'
+
+function LoginPage() {
+  const navigate = useNavigate()
+  const { setUser } = useContext(AppContext)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [alertMsg, setAlertMsg] = useState('')
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    if (!email || !password)
+      return setAlertMsg('All fields must be filled')
+
+    try {
+      const user = await loginApi.login({ email, password })
+      localStorage.setItem('token', user.token)
+      localStorage.setItem('user', JSON.stringify({
+        username: user.username,
+        email: user.email,
+        id: user.id,
+      }))
+
+      setUser({ username: user.username, email: user.email, id: user.id })
+      navigate('/dashboard')
+    }
+    catch (err) {
+      const message = handleApiError(err, 'Login failed')
+      setAlertMsg(message)
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-900 to-green-700 text-white">
+      {alertMsg && (
+        <CustomAlert message={alertMsg} onClose={() => setAlertMsg('')} />
+      )}
+      <div className="bg-neutral-900 p-8 rounded-xl shadow-md w-full max-w-md">
+        <h1 className="text-3xl font-bold mb-6 text-center">Sign in to DevConnect</h1>
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block mb-1 text-sm font-medium">Email</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder="example@email.com"
+              className="w-full px-4 py-2 rounded bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block mb-1 text-sm font-medium">Password</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              autoComplete="current-password"
+              className="w-full px-4 py-2 rounded bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-green-600 hover:bg-green-500 hover:cursor-pointer active:bg-green-400 text-white py-2 rounded font-semibold transition-colors"
+          >
+            Sign in
+          </button>
+        </form>
+
+        <p className="text-sm text-center mt-6 text-green-200">
+          Don't have an account?
+          {' '}
+          <Link to="/register" className="text-white underline hover:text-green-400">Sign up</Link>
+          {' '}
+          or
+          {' '}
+          <Link to="/" className="text-white underline hover:text-green-400">Learn more</Link>
+        </p>
+      </div>
+    </div>
+  )
+}
+
+export default LoginPage
