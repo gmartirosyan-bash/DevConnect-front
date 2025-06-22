@@ -71,6 +71,7 @@ function AddColumnForm() {
                   }
                 }}
                 id="columnTitle"
+                maxlength="50"
                 type="text"
                 name="columnTitle"
                 placeholder="Enter column name..."

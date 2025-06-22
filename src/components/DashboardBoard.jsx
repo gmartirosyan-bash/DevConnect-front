@@ -7,7 +7,7 @@ function DashboardBoard({ board }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   return (
-    <div className="flex flex-1">
+    <div className="flex  bg-amber-200 h-full">
       <div className={`bg-neutral-900 divide-y divide-neutral-500/45 text-right text-neutral-300 transition-[width] duration-400
         ${sidebarOpen ? 'w-1/6' : 'w-9'}`}
       >

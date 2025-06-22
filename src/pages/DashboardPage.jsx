@@ -269,7 +269,7 @@ function DashboardPage() {
   }
 
   return (
-    <div className="text-center text-black bg-neutral-800 flex flex-col h-screen">
+    <div className="text-center text-black bg-neutral-800  h-full">
       {alertMsg
         && (<CustomAlert message={alertMsg} onClose={() => setAlertMsg('')} />
         )}

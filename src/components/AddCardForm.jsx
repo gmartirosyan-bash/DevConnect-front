@@ -71,6 +71,7 @@ function AddCardForm({ columnId }) {
                     onFormSubmit(e)
                   }
                 }}
+                maxlength="50"
                 id="cardTitle"
                 type="text"
                 ref={inputRef}

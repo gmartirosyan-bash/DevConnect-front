@@ -64,8 +64,9 @@ export function AddBoardForm() {
               </label>
               <textarea
                 className="overflow-hidden w-full bg-neutral-800  focus:text-white
-            mr-5 p-1 rounded-xs focus:bg-gray-900"
+                mr-5 p-1 rounded-xs focus:bg-gray-900"
                 id="boardTitle"
+                maxlength="50"
                 type="text"
                 ref={inputRef}
                 onKeyDown={(e) => {
