@@ -81,6 +81,7 @@ function UserPage() {
           >
             <label htmlFor="email" className="block">
               Username:
+              {' '}
               {user.username}
             </label>
             <input
@@ -117,6 +118,7 @@ function UserPage() {
           >
             <label htmlFor="email" className="block">
               Email:
+              {' '}
               {user.email}
             </label>
             <input
