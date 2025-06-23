@@ -1,19 +1,21 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import loginApi from '../api/login'
 import usersApi from '../api/users'
-import { AppContext } from '../context/AppContext'
 import handleApiError from '../utils/handleApiError'
 import CustomAlert from '../components/CustomAlert'
+import { useDispatch } from 'react-redux'
+import { setUser, setToken } from '../redux/userSlice'
+
 
 function RegisterPage() {
-  const { setUser } = useContext(AppContext)
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [repeatPassword, setRepeatPassword] = useState('')
   const [alertMsg, setAlertMsg] = useState('')
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleRegister = async (e) => {
     e.preventDefault()
@@ -25,13 +27,10 @@ function RegisterPage() {
     try {
       await usersApi.createUser({ username, email, password })
       const user = await loginApi.login({ email, password })
-      localStorage.setItem('token', user.token)
-      localStorage.setItem('user', JSON.stringify({
-        username: user.username,
-        email: user.email,
-        id: user.id,
-      }))
-      setUser({ username: user.username, email: user.email, id: user.id })
+
+      dispatch(setToken(user.token))
+      dispatch(setUser({ user: user.username, email: user.email, id: user.id}))
+
       navigate('/dashboard')
     }
     catch (err) {

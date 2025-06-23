@@ -2,28 +2,27 @@ import axios from 'axios'
 
 const baseUrl = '/api/cards'
 
-function getTokenConfig() {
-  const tokenRaw = localStorage.getItem('token')
-  return { headers: { Authorization: `Bearer ${tokenRaw}` } }
+function getTokenConfig(token) {
+  return { headers: { Authorization: `Bearer ${token}` } }
 }
 
-async function createCard(blogObj) {
-  const res = await axios.post(baseUrl, blogObj, getTokenConfig())
+async function createCard(blogObj, token) {
+  const res = await axios.post(baseUrl, blogObj, getTokenConfig(token))
   return res.data
 }
 
-async function renameCard(id, blogObj) {
-  const res = await axios.patch(`${baseUrl}/${id}/title`, blogObj, getTokenConfig())
+async function renameCard(id, blogObj, token) {
+  const res = await axios.patch(`${baseUrl}/${id}/title`, blogObj, getTokenConfig(token))
   return res.data
 }
 
-async function dragCard(id, blogObj) {
-  const res = await axios.patch(`${baseUrl}/${id}/drag`, blogObj, getTokenConfig())
+async function dragCard(id, blogObj, token) {
+  const res = await axios.patch(`${baseUrl}/${id}/drag`, blogObj, getTokenConfig(token))
   return res.data
 }
 
-async function deleteCard(id) {
-  await axios.delete(`${baseUrl}/${id}`, getTokenConfig())
+async function deleteCard(id, token) {
+  await axios.delete(`${baseUrl}/${id}`, getTokenConfig(token))
 }
 
 export default { createCard, renameCard, dragCard, deleteCard }

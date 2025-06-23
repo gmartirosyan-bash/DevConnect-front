@@ -1,16 +1,17 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import boardsApi from '../api/boards'
 import cardsApi from '../api/cards'
 import columnsApi from '../api/columns'
-import { AppContext } from '../context/AppContext'
 import handleApiError from '../utils/handleApiError'
 import CustomAlert from '../components/CustomAlert'
 import DashboardBoard from '../components/DashboardBoard'
 import { DashboardContext } from '../context/DashboardContext'
+import { useSelector } from 'react-redux'
 
 function DashboardPage() {
-  const { token, user, handleLogout } = useContext(AppContext)
+  const token = useSelector(state => state.user.token)
+  const user = useSelector(state => state.user.user)
   const [boards, setBoards] = useState([])
   const [columns, setColumns] = useState([])
   const [cards, setCards] = useState([])
@@ -34,7 +35,7 @@ function DashboardPage() {
     const fetchBoards = async () => {
       setLoading(true)
       try {
-        const data = await boardsApi.getBoards()
+        const data = await boardsApi.getBoards(token)
         setBoards(data)
       }
       catch (err) {
@@ -53,7 +54,7 @@ function DashboardPage() {
       return
     const fetchBoard = async () => {
       try {
-        const data = await boardsApi.getFullBoard(boardId)
+        const data = await boardsApi.getFullBoard(boardId, token)
         setColumns(data.columns)
         setCards(data.cards)
       }
@@ -84,7 +85,7 @@ function DashboardPage() {
     setCards([])
     setIsLoadingBoard(true)
     try {
-      const realBoard = await boardsApi.createBoard({ title })
+      const realBoard = await boardsApi.createBoard({ title }, token)
       setBoards(prev => prev.map(board => board.id === tempId ? realBoard : board))
       navigate(`/dashboard/${realBoard.id}`)
     }
@@ -106,7 +107,7 @@ function DashboardPage() {
     setCards([])
     navigate('/dashboard')
     try {
-      await boardsApi.deleteBoard(boardId)
+      await boardsApi.deleteBoard(boardId, token)
     }
     catch (err) {
       setBoards(tempBoards)
@@ -119,7 +120,7 @@ function DashboardPage() {
 
   const handleRenameBoard = async (newTitle) => {
     try {
-      const updatedBoard = await boardsApi.renameBoard(boardId, { title: newTitle })
+      const updatedBoard = await boardsApi.renameBoard(boardId, { title: newTitle }, token)
       setBoards(boards.map(b => b.id === board.id ? { ...b, title: updatedBoard.title } : b))
     }
     catch (err) {
@@ -146,7 +147,7 @@ function DashboardPage() {
     setColumns(prev => [...prev, tempColumn])
 
     try {
-      const newColumn = await columnsApi.createColumn({ name: title, boardId })
+      const newColumn = await columnsApi.createColumn({ name: title, boardId }, token)
       setColumns(prev => prev.map(column => column.id === tempId ? newColumn : column))
     }
     catch (err) {
@@ -158,7 +159,7 @@ function DashboardPage() {
 
   const handleRenameColumn = async (columnId, newName) => {
     try {
-      const updatedColumn = await columnsApi.renameColumn(columnId, { name: newName })
+      const updatedColumn = await columnsApi.renameColumn(columnId, { name: newName }, token)
       setColumns(columns.map(col => col.id === columnId ? { ...col, name: updatedColumn.name } : col))
     }
     catch (err) {
@@ -173,7 +174,7 @@ function DashboardPage() {
     setColumns(columns.filter(column => column.id !== columnId))
     setCards(cards.filter(card => card.column.toString() !== columnId))
     try {
-      await columnsApi.deleteColumn(columnId)
+      await columnsApi.deleteColumn(columnId, token)
     }
     catch (err) {
       setColumns(tempColumns)
@@ -204,7 +205,7 @@ function DashboardPage() {
     setCards(prev => [...prev, tempCard])
 
     try {
-      const createdCard = await cardsApi.createCard({ title: newName, columnId })
+      const createdCard = await cardsApi.createCard({ title: newName, columnId }, token)
       setCards(prev => prev.map(card => card.id === tempId ? createdCard : card))
     }
     catch (err) {
@@ -216,7 +217,7 @@ function DashboardPage() {
 
   const handleRenameCard = async (cardId, newTitle) => {
     try {
-      const updatedCard = await cardsApi.renameCard(cardId, { title: newTitle })
+      const updatedCard = await cardsApi.renameCard(cardId, { title: newTitle }, token)
       setCards(cards.map(c => c.id === cardId ? { ...c, title: updatedCard.title } : c))
     }
     catch (err) {
@@ -229,7 +230,7 @@ function DashboardPage() {
     const tempCards = [...cards]
     setCards(cards.filter(card => card.id !== cardId))
     try {
-      await cardsApi.deleteCard(cardId)
+      await cardsApi.deleteCard(cardId, token)
     }
     catch (err) {
       setCards(tempCards)
@@ -254,7 +255,7 @@ function DashboardPage() {
     }
 
     try {
-      const data = await boardsApi.getFullBoard(chosen)
+      const data = await boardsApi.getFullBoard(chosen, token)
       if (fetchIdRef.current !== fetchId)
         return
       boardCache.current[chosen] = data
@@ -300,7 +301,6 @@ function DashboardPage() {
         isLoadingBoard,
 
         user,
-        handleLogout,
       }}
       >
         {loading

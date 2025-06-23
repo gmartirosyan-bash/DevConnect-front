@@ -1,5 +1,3 @@
-import { useState } from 'react'
-import { AppContext } from './context/AppContext'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import DashboardPage from './pages/DashboardPage'
 import HomePage from './pages/HomePage'
@@ -8,31 +6,30 @@ import NotFoundPage from './pages/NotFoundPage'
 import RegisterPage from './pages/RegisterPage'
 import UserPage from './pages/UserPage'
 import Layout from './layouts/Layout'
-import ProtectedRoute from './components/ProtectedRoute'
+import RequireAuth from './components/RequireAuth'
 import ConfirmBox from './components/ConfirmBox'
+import { useSelector, useDispatch } from 'react-redux'
+import { logout, hideLogoutConfirm } from './redux/userSlice'
+
 
 function App() {
-  const token = localStorage.getItem('token')
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
-  const [showConfirm, setShowConfirm] = useState(false)
+  const dispatch = useDispatch()
+  const token = useSelector(state => state.user.token)
+  const showConfirm = useSelector(state => state.user.showConfirm)
 
   const confirmLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    setUser(null)
-    setShowConfirm(false)
-  }
-  const handleLogout = () => {
-    setShowConfirm(true)
+    dispatch(hideLogoutConfirm())
+    dispatch(logout())
   }
 
   return (
-    <AppContext.Provider value={{ handleLogout, confirmLogout, token, user, setUser }}>
+    <>
       {showConfirm && (
         <ConfirmBox
           message="Do you want to log out?"
+
           onConfirm={confirmLogout}
-          onCancel={() => setShowConfirm(false)}
+          onCancel={() => dispatch(hideLogoutConfirm())}
         />
       )}
       <Routes>
@@ -40,15 +37,15 @@ function App() {
 
         <Route path="/login" element={token ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
         <Route path="/register" element={token ? <Navigate to="/dashboard" replace /> : <RegisterPage />} />
-        <Route element={<Layout />}>
-          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-          <Route path="/dashboard/:boardId" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-          <Route path="/user" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />
+        <Route element={<RequireAuth><Layout /></RequireAuth>}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/dashboard/:boardId" element={<DashboardPage />} />
+          <Route path="/user" element={<UserPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </AppContext.Provider>
+    </>
   )
 }
 

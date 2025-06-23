@@ -2,23 +2,22 @@ import axios from 'axios'
 
 const baseUrl = '/api/columns'
 
-function getTokenConfig() {
-  const tokenRaw = localStorage.getItem('token')
-  return { headers: { Authorization: `Bearer ${tokenRaw}` } }
+function getTokenConfig(token) {
+  return { headers: { Authorization: `Bearer ${token}` } }
 }
 
-async function createColumn(blogObj) {
-  const res = await axios.post(baseUrl, blogObj, getTokenConfig())
+async function createColumn(blogObj, token) {
+  const res = await axios.post(baseUrl, blogObj, getTokenConfig(token))
   return res.data
 }
 
-async function renameColumn(id, blogObj) {
-  const res = await axios.patch(`${baseUrl}/${id}`, blogObj, getTokenConfig())
+async function renameColumn(id, blogObj, token) {
+  const res = await axios.patch(`${baseUrl}/${id}`, blogObj, getTokenConfig(token))
   return res.data
 }
 
-async function deleteColumn(id) {
-  await axios.delete(`${baseUrl}/${id}`, getTokenConfig())
+async function deleteColumn(id, token) {
+  await axios.delete(`${baseUrl}/${id}`, getTokenConfig(token))
 }
 
 export default { createColumn, renameColumn, deleteColumn }

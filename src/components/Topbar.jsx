@@ -1,12 +1,14 @@
-import { useContext, useEffect, useRef, useState } from 'react'
-import { AppContext } from '../context/AppContext'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Home, LayoutDashboard, Settings, Users, LogOut } from 'lucide-react'
+import { useSelector, useDispatch } from 'react-redux'
+import { showLogoutConfirm } from '../redux/userSlice'
 
 function Topbar() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const { user, handleLogout } = useContext(AppContext)
   const menuRef = useRef(null)
+  const dispatch = useDispatch()
+  const user = useSelector(state => state.user.user)
 
   useEffect(() => {
     if (menuOpen) {
@@ -31,7 +33,7 @@ function Topbar() {
       <div ref={menuRef} className="relative">
         <div onClick={() => setMenuOpen(open => !open)}>
           <div className="w-7 h-7 rounded-full bg-green-800 flex items-center justify-center text-neutral-200 text-sm font-bold hover:cursor-pointer">
-            {user?.username.charAt(0).toUpperCase()}
+            {user.username.charAt(0).toUpperCase()}
           </div>
         </div>
         {menuOpen && (
@@ -41,7 +43,7 @@ function Topbar() {
             </div>
             <div className="px-3.5 py-2.5 flex items-center gap-2">
               <div className="w-11 h-11 rounded-full bg-green-800 flex items-center justify-center text-lg text-neutral-200 font-bold">
-                {user?.username.charAt(0).toUpperCase()}
+                {user.username.charAt(0).toUpperCase()}
               </div>
               <div>
                 <h3>{user.username}</h3>
@@ -58,11 +60,11 @@ function Topbar() {
                     User Settings
                   </li>
                 </Link>
-                <li className="px-3.5 py-2.5 hover:cursor-pointer hover:bg-neutral-700 active:bg-neutral-600" onClick={handleLogout}>
+                <li className="px-3.5 py-2.5 hover:cursor-pointer hover:bg-neutral-700 active:bg-neutral-600" onClick={() => dispatch(showLogoutConfirm())}>
                   <Users className="inline mr-2" size={20} />
                   Switch accounts
                 </li>
-                <li className="px-3.5 pt-2.5 pb-4 hover:cursor-pointer hover:bg-neutral-700 active:bg-neutral-600 group" onClick={handleLogout}>
+                <li className="px-3.5 pt-2.5 pb-4 hover:cursor-pointer hover:bg-neutral-700 active:bg-neutral-600 group" onClick={() => dispatch(showLogoutConfirm())}>
                   <LogOut className="inline mr-2 group-hover:text-red-800" size={20} />
                   Log out
                 </li>

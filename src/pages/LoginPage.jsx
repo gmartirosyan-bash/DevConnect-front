@@ -1,16 +1,20 @@
-import { useContext, useState } from 'react'
+// import { useContext } from 'react'
+import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import loginApi from '../api/login'
-import { AppContext } from '../context/AppContext'
 import handleApiError from '../utils/handleApiError'
 import CustomAlert from '../components/CustomAlert'
+import { useDispatch } from 'react-redux'
+import { setUser, setToken } from '../redux/userSlice'
+
 
 function LoginPage() {
   const navigate = useNavigate()
-  const { setUser } = useContext(AppContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [alertMsg, setAlertMsg] = useState('')
+  const dispatch = useDispatch()
+
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -19,14 +23,10 @@ function LoginPage() {
 
     try {
       const user = await loginApi.login({ email, password })
-      localStorage.setItem('token', user.token)
-      localStorage.setItem('user', JSON.stringify({
-        username: user.username,
-        email: user.email,
-        id: user.id,
-      }))
 
-      setUser({ username: user.username, email: user.email, id: user.id })
+      dispatch(setToken(user.token))
+      dispatch(setUser({ username: user.username, email: user.email, id: user.id }))
+
       navigate('/dashboard')
     }
     catch (err) {

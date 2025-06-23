@@ -1,15 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import BoardSidebar from './BoardSidebar'
 import BoardEmpty from './BoardEmpty'
 import Board from './Board'
 
 function DashboardBoard({ board }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [showSidebarContent, setShowSidebarContent] = useState(true)
 
+
+  useEffect(() => {
+    if (sidebarOpen) {
+      const timeout = setTimeout(() => setShowSidebarContent(true), 100)
+      return () => clearTimeout(timeout)
+    } else {
+      setShowSidebarContent(false)
+    }
+  }, [sidebarOpen])
   return (
-    <div className="flex  bg-amber-200 h-full">
-      <div className={`bg-neutral-900 divide-y divide-neutral-500/45 text-right text-neutral-300 transition-[width] duration-400
-        ${sidebarOpen ? 'w-1/6' : 'w-9'}`}
+    <div className="flex h-full">
+      <div className={`bg-neutral-900 divide-y divide-neutral-500/45 text-right text-neutral-300 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-10'}`}
       >
         <div className="flex justify-between my-3 pb-3">
           <p className={`ml-3 ${sidebarOpen ? '' : 'hidden'}`}>Workspace</p>
@@ -20,11 +29,13 @@ function DashboardBoard({ board }) {
             {sidebarOpen ? '❮' : '❯'}
           </button>
         </div>
-        <BoardSidebar className={` relative p-3 ${sidebarOpen ? '' : ' hidden'}`} />
+        {showSidebarContent &&
+          <BoardSidebar className='relative p-3' />
+        }
       </div>
-      {board
-        ? (<Board className={sidebarOpen ? 'w-5/6' : 'w-full'} />)
-        : <BoardEmpty />}
+      <div className="flex flex-1 overflow-hidden">
+        {board ? <Board /> : <BoardEmpty />}
+      </div>
 
     </div>
   )
