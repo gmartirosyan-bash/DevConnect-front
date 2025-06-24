@@ -1,11 +1,15 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { DashboardContext } from '../context/DashboardContext'
+import { useDispatch, useSelector } from 'react-redux'
+import { setColumnTitle } from '../redux/dashboardSlice'
 
 function AddColumnForm() {
-  const { columnTitle, setColumnTitle, handleAddColumn } = useContext(DashboardContext)
+  const columnTitle = useSelector(state => state.dashboard.columnTitle)
+  const { handleAddColumn } = useContext(DashboardContext)
   const [addColumn, setAddColumn] = useState(false)
   const formRef = useRef(null)
   const inputRef = useRef(null)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (addColumn) {
@@ -14,7 +18,7 @@ function AddColumnForm() {
       }
       const handleClickOutside = (e) => {
         if (formRef.current && !formRef.current.contains(e.target)) {
-          setColumnTitle('')
+          dispatch(setColumnTitle(''))
           setAddColumn(false)
         }
       }
@@ -23,7 +27,7 @@ function AddColumnForm() {
         document.removeEventListener('mousedown', handleClickOutside)
       }
     }
-  }, [addColumn, setColumnTitle])
+  }, [addColumn, dispatch])
 
   const onFormSubmit = (e) => {
     handleAddColumn(e)
@@ -32,7 +36,7 @@ function AddColumnForm() {
 
   const onFormReject = () => {
     setAddColumn(false)
-    setColumnTitle('')
+    dispatch(setColumnTitle(''))
   }
 
   return (
@@ -71,14 +75,14 @@ function AddColumnForm() {
                   }
                 }}
                 id="columnTitle"
-                maxlength="50"
+                maxLength={50}
                 type="text"
                 name="columnTitle"
                 placeholder="Enter column name..."
                 ref={inputRef}
                 required
                 value={columnTitle}
-                onChange={e => setColumnTitle(e.target.value)}
+                onChange={e => dispatch(setColumnTitle(e.target.value))}
               />
               <button
                 className="text-neutral-300 bg-blue-950 p-1.5

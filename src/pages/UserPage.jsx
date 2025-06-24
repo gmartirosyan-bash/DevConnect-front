@@ -1,5 +1,3 @@
-// import { useContext } from 'react'
-// import { AppContext } from '../context/AppContext'
 import { useState } from 'react'
 import usersApi from '../api/users'
 import handleApiError from '../utils/handleApiError'
@@ -9,7 +7,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setUser, logout } from '../redux/userSlice'
 
 function UserPage() {
-  // const { user, setUser, confirmLogout } = useContext(AppContext)
   const token = useSelector(state => state.user.token)
   const user = useSelector(state => state.user.user)
   const [newUsername, setNewUsername] = useState('')
@@ -25,16 +22,12 @@ function UserPage() {
         await usersApi.editUser(user.id, { username: newUsername }, token)
         const updatedUser = { ...user, username: newUsername }
         dispatch(setUser(updatedUser))
-        // setUser(updatedUser)
-        // localStorage.setItem('user', JSON.stringify(updatedUser))
         setNewUsername('')
       }
       else if (arg === 'email') {
         await usersApi.editUser(user.id, { email: newEmail }, token)
         const updatedUser = { ...user, email: newEmail }
         dispatch(setUser(updatedUser))
-        // setUser(updatedUser)
-        // localStorage.setItem('user', JSON.stringify(updatedUser))
         setNewEmail('')
       }
     }
@@ -55,8 +48,6 @@ function UserPage() {
     try {
       await usersApi.deleteUser(user.id, token)
       dispatch(logout())
-      // confirmLogout()
-
     }
     catch (err) {
       const message = handleApiError(err, 'Failed to delete the user. Please try again')

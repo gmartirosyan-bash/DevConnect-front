@@ -1,11 +1,15 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { DashboardContext } from '../context/DashboardContext'
+import { useDispatch, useSelector } from 'react-redux'
+import { setCardTitle } from '../redux/dashboardSlice'
 
 function AddCardForm({ columnId }) {
-  const { cardTitle, setCardTitle, handleAddCard } = useContext(DashboardContext)
+  const cardTitle = useSelector(state => state.dashboard.cardTitle)
+  const { handleAddCard } = useContext(DashboardContext)
   const [addCard, setAddCard] = useState(true)
   const formRef = useRef(null)
   const inputRef = useRef(null)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (!addCard) {
@@ -15,7 +19,7 @@ function AddCardForm({ columnId }) {
       const handleClickOutside = (e) => {
         if (formRef.current && !formRef.current.contains(e.target)) {
           setAddCard(true)
-          setCardTitle('')
+          dispatch(setCardTitle(''))
         }
       }
       document.addEventListener('mousedown', handleClickOutside)
@@ -23,7 +27,7 @@ function AddCardForm({ columnId }) {
         document.removeEventListener('mousedown', handleClickOutside)
       }
     }
-  }, [addCard, setCardTitle])
+  }, [addCard, dispatch])
 
   const onFormSubmit = (e) => {
     handleAddCard(e, columnId)
@@ -32,7 +36,7 @@ function AddCardForm({ columnId }) {
 
   const onFormReject = () => {
     setAddCard(true)
-    setCardTitle('')
+    dispatch(setCardTitle(''))
   }
 
   return (
@@ -71,7 +75,7 @@ function AddCardForm({ columnId }) {
                     onFormSubmit(e)
                   }
                 }}
-                maxlength="50"
+                maxLength={50}
                 id="cardTitle"
                 type="text"
                 ref={inputRef}
@@ -79,7 +83,7 @@ function AddCardForm({ columnId }) {
                 placeholder="Enter card name..."
                 required
                 value={cardTitle}
-                onChange={e => setCardTitle(e.target.value)}
+                onChange={e => dispatch(setCardTitle(e.target.value))}
               />
               <button
                 className="text-neutral-300 bg-blue-950 p-1.5 text-sm

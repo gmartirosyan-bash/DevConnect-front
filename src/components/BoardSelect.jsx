@@ -1,8 +1,11 @@
 import { useContext } from 'react'
 import { DashboardContext } from '../context/DashboardContext'
+import { useSelector } from 'react-redux'
 
 function BoardSelect() {
-  const { handleSelect, boards } = useContext(DashboardContext)
+  const boards = useSelector(state => state.dashboard.boards)
+  const { handleSelect } = useContext(DashboardContext)
+  
   return (
     <div className="text-left divide-y divide-neutral-400/15 mt-2">
       {boards.map(board => (

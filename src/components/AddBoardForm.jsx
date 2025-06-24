@@ -1,11 +1,15 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { DashboardContext } from '../context/DashboardContext'
+import { useSelector, useDispatch } from 'react-redux'
+import { setBoardTitle } from '../redux/dashboardSlice'
 
 export function AddBoardForm() {
-  const { boardTitle, setBoardTitle, handleAddBoard } = useContext(DashboardContext)
+  const boardTitle = useSelector(state => state.dashboard.boardTitle)
+  const { handleAddBoard } = useContext(DashboardContext)
   const [popup, setPopup] = useState(false)
   const formRef = useRef(null)
   const inputRef = useRef(null)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (popup) {
@@ -15,7 +19,7 @@ export function AddBoardForm() {
       const handleClickOutside = (e) => {
         if (formRef.current && !formRef.current.contains(e.target)) {
           setPopup(false)
-          setBoardTitle('')
+          dispatch(setBoardTitle(''))
         }
       }
       document.addEventListener('mousedown', handleClickOutside)
@@ -23,7 +27,7 @@ export function AddBoardForm() {
         document.removeEventListener('mousedown', handleClickOutside)
       }
     }
-  }, [popup, setBoardTitle])
+  }, [popup, dispatch])
 
   const onFormSubmit = (e) => {
     handleAddBoard(e)
@@ -32,7 +36,7 @@ export function AddBoardForm() {
 
   const onFormReject = () => {
     setPopup(prev => !prev)
-    setBoardTitle('')
+    dispatch(setBoardTitle(''))
   }
 
   return (
@@ -66,7 +70,7 @@ export function AddBoardForm() {
                 className="overflow-hidden w-full bg-neutral-800  focus:text-white
                 mr-5 p-1 rounded-xs focus:bg-gray-900"
                 id="boardTitle"
-                maxlength="50"
+                maxLength={50}
                 type="text"
                 ref={inputRef}
                 onKeyDown={(e) => {
@@ -79,7 +83,7 @@ export function AddBoardForm() {
                 placeholder="Add a new board..."
                 required
                 value={boardTitle}
-                onChange={e => setBoardTitle(e.target.value)}
+                onChange={e => dispatch(setBoardTitle(e.target.value))}
               />
               <button
                 className="bg-neutral-800 hover:cursor-pointer hover:bg-neutral-700

@@ -1,9 +1,8 @@
-import { useContext } from 'react'
-import { DashboardContext } from '../context/DashboardContext'
+import { useSelector } from 'react-redux'
 import Card from './Card'
 
 function Cards({ columnId }) {
-  const { cards } = useContext(DashboardContext)
+  const cards = useSelector(state => state.dashboard.cards)
 
   return (
     <div>

@@ -7,24 +7,26 @@ import handleApiError from '../utils/handleApiError'
 import CustomAlert from '../components/CustomAlert'
 import DashboardBoard from '../components/DashboardBoard'
 import { DashboardContext } from '../context/DashboardContext'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setBoards, setColumns, setCards, setBoardTitle, setColumnTitle, setCardTitle, setLoading, setIsLoadingBoard } from '../redux/dashboardSlice'
 
 function DashboardPage() {
   const token = useSelector(state => state.user.token)
-  const user = useSelector(state => state.user.user)
-  const [boards, setBoards] = useState([])
-  const [columns, setColumns] = useState([])
-  const [cards, setCards] = useState([])
-  const [boardTitle, setBoardTitle] = useState('')
-  const [columnTitle, setColumnTitle] = useState('')
-  const [cardTitle, setCardTitle] = useState('')
+  const boards = useSelector(state => state.dashboard.boards)
+  const columns = useSelector(state => state.dashboard.columns)
+  const cards = useSelector(state => state.dashboard.cards)
+  const boardTitle = useSelector(state => state.dashboard.boardTitle)
+  const columnTitle = useSelector(state => state.dashboard.columnTitle)
+  const cardTitle = useSelector(state => state.dashboard.cardTitle)
+  const loading = useSelector(state => state.dashboard.loading)
+  const isLoadingBoard = useSelector(state => state.dashboard.isLoadingBoard)
+
   const { boardId } = useParams()
   const board = boards.find(b => b.id === boardId)
-  const [loading, setLoading] = useState(false)
-  const [isLoadingBoard, setIsLoadingBoard] = useState(false)
   const [alertMsg, setAlertMsg] = useState('')
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const fetchIdRef = useRef(0)
   const didReload = useRef(true)
@@ -33,21 +35,21 @@ function DashboardPage() {
     if (!token)
       return
     const fetchBoards = async () => {
-      setLoading(true)
+      dispatch(setLoading(true))
       try {
         const data = await boardsApi.getBoards(token)
-        setBoards(data)
+        dispatch(setBoards(data))
       }
       catch (err) {
         const message = handleApiError(err, 'Failed to load the boards. Please try again')
         setAlertMsg(message)
       }
       finally {
-        setLoading(false)
+        dispatch(setLoading(false))
       }
     }
     fetchBoards()
-  }, [token])
+  }, [token, dispatch])
 
   useEffect(() => {
     if (!boardId || !token || !didReload.current)
@@ -55,8 +57,8 @@ function DashboardPage() {
     const fetchBoard = async () => {
       try {
         const data = await boardsApi.getFullBoard(boardId, token)
-        setColumns(data.columns)
-        setCards(data.cards)
+        dispatch(setColumns(data.columns))
+        dispatch(setCards(data.cards))
       }
       catch (err) {
         const message = handleApiError(err, 'Failed to load the board. Please try again')
@@ -64,7 +66,7 @@ function DashboardPage() {
       }
     }
     fetchBoard()
-  }, [boardId, token])
+  }, [boardId, token, dispatch])
 
   const handleAddBoard = async (e) => {
     e.preventDefault()
@@ -79,22 +81,23 @@ function DashboardPage() {
       optimistic: true,
     }
 
-    setBoards(prev => [...prev, optimisticBoard])
-    setBoardTitle('')
-    setColumns([])
-    setCards([])
-    setIsLoadingBoard(true)
+    const newFakeBoards = [...boards, optimisticBoard]
+    dispatch(setBoards(newFakeBoards))
+    dispatch(setBoardTitle(''))
+    dispatch(setColumns([]))
+    dispatch(setCards([]))
+    dispatch(setIsLoadingBoard(true))
     try {
       const realBoard = await boardsApi.createBoard({ title }, token)
-      setBoards(prev => prev.map(board => board.id === tempId ? realBoard : board))
+      dispatch(setBoards(newFakeBoards.map(board => board.id === tempId ? realBoard : board)))
       navigate(`/dashboard/${realBoard.id}`)
     }
     catch (err) {
-      setBoards(prev => prev.filter(board => board.id !== tempId))
+      dispatch(setBoards(newFakeBoards.filter(board => board.id !== tempId)))
       const message = handleApiError(err, 'Failed to create the board. Please try again')
       setAlertMsg(message)
     }
-    setIsLoadingBoard(false)
+    dispatch(setIsLoadingBoard(false))
   }
 
   const handleDeleteBoard = async () => {
@@ -102,17 +105,17 @@ function DashboardPage() {
     const tempColumns = [...columns]
     const tempCards = [...cards]
 
-    setBoards(boards.filter(b => b.id !== board.id))
-    setColumns([])
-    setCards([])
+    dispatch(setBoards(boards.filter(b => b.id !== board.id)))
+    dispatch(setColumns([]))
+    dispatch(setCards([]))
     navigate('/dashboard')
     try {
       await boardsApi.deleteBoard(boardId, token)
     }
     catch (err) {
-      setBoards(tempBoards)
-      setColumns(tempColumns)
-      setCards(tempCards)
+      dispatch(setBoards(tempBoards))
+      dispatch(setColumns(tempColumns))
+      dispatch(setCards(tempCards))
       const message = handleApiError(err, 'Failed to delete the board. Please try again')
       setAlertMsg(message)
     }
@@ -121,7 +124,7 @@ function DashboardPage() {
   const handleRenameBoard = async (newTitle) => {
     try {
       const updatedBoard = await boardsApi.renameBoard(boardId, { title: newTitle }, token)
-      setBoards(boards.map(b => b.id === board.id ? { ...b, title: updatedBoard.title } : b))
+      dispatch(setBoards(boards.map(b => b.id === board.id ? { ...b, title: updatedBoard.title } : b)))
     }
     catch (err) {
       const message = handleApiError(err, 'Failed to rename the board. Please try again')
@@ -135,7 +138,7 @@ function DashboardPage() {
     if (!title)
       return
 
-    setColumnTitle('')
+    dispatch(setColumnTitle(''))
 
     const tempId = `temp-${Date.now()}`
     const tempColumn = {
@@ -144,14 +147,16 @@ function DashboardPage() {
       board: boardId,
       optimistic: true,
     }
-    setColumns(prev => [...prev, tempColumn])
+
+    const newFakeColumns = [...columns, tempColumn]
+    dispatch(setColumns(newFakeColumns))
 
     try {
       const newColumn = await columnsApi.createColumn({ name: title, boardId }, token)
-      setColumns(prev => prev.map(column => column.id === tempId ? newColumn : column))
+      dispatch(setColumns(newFakeColumns.map(column => column.id === tempId ? newColumn : column)))
     }
     catch (err) {
-      setColumns(columns.filter(column => column.id !== tempId))
+      dispatch(setColumns(newFakeColumns.filter(column => column.id !== tempId)))
       const message = handleApiError(err, 'Failed to create the column. Please try again')
       setAlertMsg(message)
     }
@@ -160,7 +165,7 @@ function DashboardPage() {
   const handleRenameColumn = async (columnId, newName) => {
     try {
       const updatedColumn = await columnsApi.renameColumn(columnId, { name: newName }, token)
-      setColumns(columns.map(col => col.id === columnId ? { ...col, name: updatedColumn.name } : col))
+      dispatch(setColumns(columns.map(col => col.id === columnId ? { ...col, name: updatedColumn.name } : col)))
     }
     catch (err) {
       const message = handleApiError(err, 'Failed to rename the column. Please try again')
@@ -171,14 +176,14 @@ function DashboardPage() {
   const handleDeleteColumn = async (columnId) => {
     const tempColumns = [...columns]
     const tempCards = [...cards]
-    setColumns(columns.filter(column => column.id !== columnId))
-    setCards(cards.filter(card => card.column.toString() !== columnId))
+    dispatch(setColumns(columns.filter(column => column.id !== columnId)))
+    dispatch(setCards(cards.filter(card => card.column.toString() !== columnId)))
     try {
       await columnsApi.deleteColumn(columnId, token)
     }
     catch (err) {
-      setColumns(tempColumns)
-      setCards(tempCards)
+      dispatch(setColumns(tempColumns))
+      dispatch(setCards(tempCards))
       const message = handleApiError(err, 'Failed to delete the column. Please try again')
       setAlertMsg(message)
     }
@@ -190,7 +195,7 @@ function DashboardPage() {
     if (!newName)
       return setAlertMsg('Name is required')
 
-    setCardTitle('')
+    dispatch(setCardTitle(''))
 
     const tempId = `temp-${Date.now()}`
     const tempCard = {
@@ -202,14 +207,15 @@ function DashboardPage() {
       optimistic: true,
     }
 
-    setCards(prev => [...prev, tempCard])
+    const newFakeCards = [...cards, tempCard]
+    dispatch(setCards(newFakeCards))
 
     try {
       const createdCard = await cardsApi.createCard({ title: newName, columnId }, token)
-      setCards(prev => prev.map(card => card.id === tempId ? createdCard : card))
+      dispatch(setCards(newFakeCards.map(card => card.id === tempId ? createdCard : card)))
     }
     catch (err) {
-      setCards(prev => prev.filter(card => card.id !== tempId))
+      dispatch(setCards(newFakeCards.filter(card => card.id !== tempId)))
       const message = handleApiError(err, 'Failed to create the card. Please try again')
       setAlertMsg(message)
     }
@@ -218,7 +224,7 @@ function DashboardPage() {
   const handleRenameCard = async (cardId, newTitle) => {
     try {
       const updatedCard = await cardsApi.renameCard(cardId, { title: newTitle }, token)
-      setCards(cards.map(c => c.id === cardId ? { ...c, title: updatedCard.title } : c))
+      dispatch(setCards(cards.map(c => c.id === cardId ? { ...c, title: updatedCard.title } : c)))
     }
     catch (err) {
       const message = handleApiError(err, 'Failed to rename the card. Please try again')
@@ -228,12 +234,12 @@ function DashboardPage() {
 
   const handleDeleteCard = async (cardId) => {
     const tempCards = [...cards]
-    setCards(cards.filter(card => card.id !== cardId))
+    dispatch(setCards(cards.filter(card => card.id !== cardId)))
     try {
       await cardsApi.deleteCard(cardId, token)
     }
     catch (err) {
-      setCards(tempCards)
+      dispatch(setCards(tempCards))
       const message = handleApiError(err, 'Failed to delete the card. Please try again')
       setAlertMsg(message)
     }
@@ -245,13 +251,12 @@ function DashboardPage() {
     didReload.current = false
     const fetchId = ++fetchIdRef.current
     navigate(`/dashboard/${chosen}`)
-    setIsLoadingBoard(true)
+    dispatch(setIsLoadingBoard(true))
     const cached = boardCache.current[chosen]
     if (cached) {
-      setColumns(cached.columns)
-      setCards(cached.cards)
-      setLoading(false)
-      setIsLoadingBoard(false)
+      dispatch(setColumns(cached.columns))
+      dispatch(setCards(cached.cards))
+      dispatch(setIsLoadingBoard(false))
     }
 
     try {
@@ -259,14 +264,14 @@ function DashboardPage() {
       if (fetchIdRef.current !== fetchId)
         return
       boardCache.current[chosen] = data
-      setColumns(data.columns)
-      setCards(data.cards)
+      dispatch(setColumns(data.columns))
+      dispatch(setCards(data.cards))
     }
     catch (err) {
       const message = handleApiError(err, 'Failed to load the board. Please try again')
       setAlertMsg(message)
     }
-    setIsLoadingBoard(false)
+    dispatch(setIsLoadingBoard(false))
   }
 
   return (
@@ -276,31 +281,21 @@ function DashboardPage() {
         )}
       <DashboardContext.Provider value={{
         handleSelect,
-        boards,
-        boardTitle,
-        setBoardTitle,
         handleAddBoard,
 
         board,
         handleRenameBoard,
-        columnTitle,
-        setColumnTitle,
         handleAddColumn,
-        columns,
         handleDeleteColumn,
         handleRenameColumn,
         handleDeleteBoard,
 
-        cards,
-        cardTitle,
-        setCardTitle,
         handleAddCard,
         handleDeleteCard,
         handleRenameCard,
 
         isLoadingBoard,
 
-        user,
       }}
       >
         {loading
