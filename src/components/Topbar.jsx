@@ -5,10 +5,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import { showLogoutConfirm } from '../redux/userSlice'
 
 function Topbar() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const menuRef = useRef(null)
-  const dispatch = useDispatch()
   const user = useSelector(state => state.user.user)
+
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const menuRef = useRef(null)
+  
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (menuOpen) {

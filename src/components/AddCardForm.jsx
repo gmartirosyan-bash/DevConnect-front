@@ -1,14 +1,16 @@
-import { useContext, useEffect, useRef, useState } from 'react'
-import { DashboardContext } from '../context/DashboardContext'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setCardTitle } from '../redux/dashboardSlice'
+import { setCardName, createCard } from '../redux/dashboardSlice'
 
 function AddCardForm({ columnId }) {
-  const cardTitle = useSelector(state => state.dashboard.cardTitle)
-  const { handleAddCard } = useContext(DashboardContext)
+  const cardName = useSelector(state => state.dashboard.cardName)
+  const board = useSelector(state => state.dashboard.board)
+
   const [addCard, setAddCard] = useState(true)
+
   const formRef = useRef(null)
   const inputRef = useRef(null)
+
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -19,7 +21,7 @@ function AddCardForm({ columnId }) {
       const handleClickOutside = (e) => {
         if (formRef.current && !formRef.current.contains(e.target)) {
           setAddCard(true)
-          dispatch(setCardTitle(''))
+          dispatch(setCardName(''))
         }
       }
       document.addEventListener('mousedown', handleClickOutside)
@@ -30,13 +32,14 @@ function AddCardForm({ columnId }) {
   }, [addCard, dispatch])
 
   const onFormSubmit = (e) => {
-    handleAddCard(e, columnId)
+    e.preventDefault()
+    dispatch(createCard({ board, columnId }))
     setAddCard(true)
   }
 
   const onFormReject = () => {
     setAddCard(true)
-    dispatch(setCardTitle(''))
+    dispatch(setCardName(''))
   }
 
   return (
@@ -66,7 +69,7 @@ function AddCardForm({ columnId }) {
               onSubmit={onFormSubmit}
               ref={formRef}
             >
-              <label htmlFor="cardTitle" style={{ display: 'none' }}>Card Title</label>
+              <label htmlFor="cardName" style={{ display: 'none' }}>Card Name</label>
               <textarea
                 className="overflow-hidden w-full bg-neutral-800 text-neutral-200 mb-3 rounded-xs p-1 placeholder:text-neutral-400"
                 onKeyDown={(e) => {
@@ -76,14 +79,14 @@ function AddCardForm({ columnId }) {
                   }
                 }}
                 maxLength={50}
-                id="cardTitle"
+                id="cardName"
                 type="text"
                 ref={inputRef}
-                name="cardTitle"
+                name="cardName"
                 placeholder="Enter card name..."
                 required
-                value={cardTitle}
-                onChange={e => dispatch(setCardTitle(e.target.value))}
+                value={cardName}
+                onChange={e => dispatch(setCardName(e.target.value))}
               />
               <button
                 className="text-neutral-300 bg-blue-950 p-1.5 text-sm

@@ -24,14 +24,14 @@ export default [
       react,
     },
     rules: {
-      'react/jsx-no-undef': 'warn',
+      'react/jsx-no-undef': 'error',
       semi: ["error", "never"],
 			'no-undef': 'error',
       "react/prop-types": "off",
 
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      'no-unused-vars': ['warn', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },

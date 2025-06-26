@@ -4,25 +4,28 @@ import loginApi from '../api/login'
 import usersApi from '../api/users'
 import handleApiError from '../utils/handleApiError'
 import CustomAlert from '../components/CustomAlert'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setUser, setToken } from '../redux/userSlice'
+import { setAlertMsg } from '../redux/uiSlice'
 
 
 function RegisterPage() {
+  const alertMsg = useSelector(state => state.ui.alertMsg)
+
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [repeatPassword, setRepeatPassword] = useState('')
-  const [alertMsg, setAlertMsg] = useState('')
+
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const handleRegister = async (e) => {
     e.preventDefault()
     if (password !== repeatPassword)
-      return setAlertMsg('Passwords don\'t match')
+      return dispatch(setAlertMsg('Passwords don\'t match'))
     if (!password || !email || !username)
-      return setAlertMsg('Every field must be filled')
+      return dispatch(setAlertMsg('Every field must be filled'))
 
     try {
       await usersApi.createUser({ username, email, password })
@@ -35,14 +38,14 @@ function RegisterPage() {
     }
     catch (err) {
       const message = handleApiError(err, 'Registration failed')
-      setAlertMsg(message)
+      dispatch(setAlertMsg(message))
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-900 to-green-700 text-white">
       {alertMsg && (
-        <CustomAlert message={alertMsg} onClose={() => setAlertMsg('')} />
+        <CustomAlert message={alertMsg} onClose={() => dispatch(setAlertMsg(''))} />
       )}
       <div className="bg-neutral-900 p-8 rounded-xl shadow-md w-full max-w-md">
         <h1 className="text-3xl font-bold mb-6 text-center">Create an Account</h1>

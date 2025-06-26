@@ -3,22 +3,24 @@ import { useNavigate, Link } from 'react-router-dom'
 import loginApi from '../api/login'
 import handleApiError from '../utils/handleApiError'
 import CustomAlert from '../components/CustomAlert'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setUser, setToken } from '../redux/userSlice'
+import { setAlertMsg } from '../redux/uiSlice'
 
 
 function LoginPage() {
-  const navigate = useNavigate()
+  const alertMsg = useSelector(state => state.ui.alertMsg)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [alertMsg, setAlertMsg] = useState('')
+
+  const navigate = useNavigate()
   const dispatch = useDispatch()
 
 
   const handleLogin = async (e) => {
     e.preventDefault()
     if (!email || !password)
-      return setAlertMsg('All fields must be filled')
+      return dispatch(setAlertMsg('All fields must be filled'))
 
     try {
       const user = await loginApi.login({ email, password })
@@ -30,14 +32,14 @@ function LoginPage() {
     }
     catch (err) {
       const message = handleApiError(err, 'Login failed')
-      setAlertMsg(message)
+      dispatch(setAlertMsg(message))
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-900 to-green-700 text-white">
       {alertMsg && (
-        <CustomAlert message={alertMsg} onClose={() => setAlertMsg('')} />
+        <CustomAlert message={alertMsg} onClose={() => dispatch(setAlertMsg(''))} />
       )}
       <div className="bg-neutral-900 p-8 rounded-xl shadow-md w-full max-w-md">
         <h1 className="text-3xl font-bold mb-6 text-center">Sign in to DevConnect</h1>

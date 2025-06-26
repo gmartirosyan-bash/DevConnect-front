@@ -1,14 +1,18 @@
 import Cards from './Cards'
 import AddCardForm from './AddCardForm'
+import { useDispatch } from 'react-redux'
+import { renameColumn, deleteColumn } from '../redux/dashboardSlice'
 
-function Column({ column, onRename, onDelete }) {
+function Column({ column }) {
+  const dispatch = useDispatch()
+
   const handleBlur = (e) => {
     const newName = e.target.innerText
     if (column.name === newName.trim())
       return
     if (!newName.trim())
       return e.target.innerText = column.name
-    onRename(column.id, newName.trim())
+    dispatch(renameColumn({ columnId: column.id, newName: newName.trim() }))
   }
 
   const handleKeyDown = (e) => {
@@ -40,8 +44,8 @@ function Column({ column, onRename, onDelete }) {
         <button
           className="hover:cursor-pointer text-neutral-200 text-lg bg-neutral-900/70 rounded hover:bg-red-800 active:bg-red-700 hover:text-white transition px-2 py-0.5"
           type="button"
-          onClick={() => onDelete(column.id)}
-          title="Delete column"
+          onClick={() => dispatch(deleteColumn({ columnId: column.id }))}
+          name="Delete column"
         >
           &times;
         </button>

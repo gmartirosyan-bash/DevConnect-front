@@ -12,7 +12,7 @@ async function createCard(blogObj, token) {
 }
 
 async function renameCard(id, blogObj, token) {
-  const res = await axios.patch(`${baseUrl}/${id}/title`, blogObj, getTokenConfig(token))
+  const res = await axios.patch(`${baseUrl}/${id}/name`, blogObj, getTokenConfig(token))
   return res.data
 }
 

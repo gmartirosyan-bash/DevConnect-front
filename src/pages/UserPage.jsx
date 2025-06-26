@@ -5,14 +5,17 @@ import { X, Check } from 'lucide-react'
 import CustomAlert from '../components/CustomAlert'
 import { useSelector, useDispatch } from 'react-redux'
 import { setUser, logout } from '../redux/userSlice'
+import { setAlertMsg } from '../redux/uiSlice'
 
 function UserPage() {
   const token = useSelector(state => state.user.token)
   const user = useSelector(state => state.user.user)
+  const alertMsg = useSelector(state => state.ui.alertMsg)
+
   const [newUsername, setNewUsername] = useState('')
   const [newEmail, setNewEmail] = useState('')
   const [showConfirm, setShowConfirm] = useState(false)
-  const [alertMsg, setAlertMsg] = useState('')
+
   const dispatch = useDispatch()
 
   const handleUserEdit = async (e, arg) => {
@@ -33,7 +36,7 @@ function UserPage() {
     }
     catch (err) {
       const message = handleApiError(err, 'Failed to change email or username. Please try again')
-      setAlertMsg(message)
+      dispatch(setAlertMsg(message))
     }
   }
 
@@ -51,14 +54,14 @@ function UserPage() {
     }
     catch (err) {
       const message = handleApiError(err, 'Failed to delete the user. Please try again')
-      setAlertMsg(message)
+      dispatch(setAlertMsg(message))
     }
   }
 
   return (
     <div className="h-full bg-gradient-to-t from-green-950 to-green-900 text-neutral-200 px-6 py-8">
       {alertMsg && (
-        <CustomAlert message={alertMsg} onClose={() => setAlertMsg('')} />
+        <CustomAlert message={alertMsg} onClose={() => dispatch(setAlertMsg(''))} />
       )}
       <div className="max-w-3xl mx-auto">
         <div className="relative bg-gradient-to-r

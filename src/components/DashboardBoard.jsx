@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react'
 import BoardSidebar from './BoardSidebar'
 import BoardEmpty from './BoardEmpty'
 import Board from './Board'
+import { useSelector } from 'react-redux'
 
-function DashboardBoard({ board }) {
+function DashboardBoard() {
+  const board = useSelector(state => state.dashboard.board)
+
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [showSidebarContent, setShowSidebarContent] = useState(true)
-
 
   useEffect(() => {
     if (sidebarOpen) {
@@ -16,6 +18,7 @@ function DashboardBoard({ board }) {
       setShowSidebarContent(false)
     }
   }, [sidebarOpen])
+
   return (
     <div className="flex h-full">
       <div className={`bg-neutral-900 divide-y divide-neutral-500/45 text-right text-neutral-300 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-10'}`}
@@ -34,7 +37,7 @@ function DashboardBoard({ board }) {
         }
       </div>
       <div className="flex flex-1 overflow-hidden">
-        {board ? <Board /> : <BoardEmpty />}
+        {board ? <Board board={board} /> : <BoardEmpty />}
       </div>
 
     </div>

@@ -1,10 +1,10 @@
-import { useContext } from 'react'
-import { DashboardContext } from '../context/DashboardContext'
 import AddBoardForm from './AddBoardForm'
 import BoardSelect from './BoardSelect'
+import { useSelector } from 'react-redux'
 
 function BoardSidebar({ className }) {
-  const { isLoadingBoard } = useContext(DashboardContext)
+  const isLoadingBoard = useSelector(state => state.dashboard.isLoadingBoard)
+
   return (
     <div className={`${className} ${isLoadingBoard ? 'pointer-events-none opacity-50' : ''}`}>
       <AddBoardForm />

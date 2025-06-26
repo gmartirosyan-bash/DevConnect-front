@@ -1,11 +1,10 @@
-import { useContext, useEffect, useRef, useState } from 'react'
-import { DashboardContext } from '../context/DashboardContext'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setColumnTitle } from '../redux/dashboardSlice'
+import { setColumnName, createColumn } from '../redux/dashboardSlice'
 
 function AddColumnForm() {
-  const columnTitle = useSelector(state => state.dashboard.columnTitle)
-  const { handleAddColumn } = useContext(DashboardContext)
+  const columnName = useSelector(state => state.dashboard.columnName)
+  const boardId = useSelector(state => state.dashboard.boardId)
   const [addColumn, setAddColumn] = useState(false)
   const formRef = useRef(null)
   const inputRef = useRef(null)
@@ -18,7 +17,7 @@ function AddColumnForm() {
       }
       const handleClickOutside = (e) => {
         if (formRef.current && !formRef.current.contains(e.target)) {
-          dispatch(setColumnTitle(''))
+          dispatch(setColumnName(''))
           setAddColumn(false)
         }
       }
@@ -30,13 +29,14 @@ function AddColumnForm() {
   }, [addColumn, dispatch])
 
   const onFormSubmit = (e) => {
-    handleAddColumn(e)
+    e.preventDefault()
+    dispatch(createColumn({ boardId }))
     setAddColumn(false)
   }
 
   const onFormReject = () => {
     setAddColumn(false)
-    dispatch(setColumnTitle(''))
+    dispatch(setColumnName(''))
   }
 
   return (
@@ -61,10 +61,10 @@ function AddColumnForm() {
               ref={formRef}
             >
               <label
-                htmlFor="columnTitle"
+                htmlFor="columnName"
                 style={{ display: 'none' }}
               >
-                Column Title
+                Column Name
               </label>
               <textarea
                 className="overflow-hidden w-full bg-neutral-800 text-neutral-200 mb-3 rounded-xs p-1 placeholder:text-neutral-400"
@@ -74,15 +74,15 @@ function AddColumnForm() {
                     onFormSubmit(e)
                   }
                 }}
-                id="columnTitle"
+                id="columnName"
                 maxLength={50}
                 type="text"
-                name="columnTitle"
+                name="columnName"
                 placeholder="Enter column name..."
                 ref={inputRef}
                 required
-                value={columnTitle}
-                onChange={e => dispatch(setColumnTitle(e.target.value))}
+                value={columnName}
+                onChange={e => dispatch(setColumnName(e.target.value))}
               />
               <button
                 className="text-neutral-300 bg-blue-950 p-1.5

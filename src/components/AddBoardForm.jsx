@@ -1,15 +1,18 @@
-import { useContext, useEffect, useRef, useState } from 'react'
-import { DashboardContext } from '../context/DashboardContext'
+import { useEffect, useRef, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { setBoardTitle } from '../redux/dashboardSlice'
+import { setBoardName, createBoard } from '../redux/dashboardSlice'
+import { useNavigate } from 'react-router-dom'
 
 export function AddBoardForm() {
-  const boardTitle = useSelector(state => state.dashboard.boardTitle)
-  const { handleAddBoard } = useContext(DashboardContext)
+  const boardName = useSelector(state => state.dashboard.boardName)
+
   const [popup, setPopup] = useState(false)
+
   const formRef = useRef(null)
   const inputRef = useRef(null)
+  
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (popup) {
@@ -19,7 +22,7 @@ export function AddBoardForm() {
       const handleClickOutside = (e) => {
         if (formRef.current && !formRef.current.contains(e.target)) {
           setPopup(false)
-          dispatch(setBoardTitle(''))
+          dispatch(setBoardName(''))
         }
       }
       document.addEventListener('mousedown', handleClickOutside)
@@ -30,13 +33,14 @@ export function AddBoardForm() {
   }, [popup, dispatch])
 
   const onFormSubmit = (e) => {
-    handleAddBoard(e)
+    e.preventDefault()
+    dispatch(createBoard({ navigate }))
     setPopup(false)
   }
 
   const onFormReject = () => {
     setPopup(prev => !prev)
-    dispatch(setBoardTitle(''))
+    dispatch(setBoardName(''))
   }
 
   return (
@@ -61,15 +65,15 @@ export function AddBoardForm() {
               onSubmit={onFormSubmit}
             >
               <label
-                htmlFor="boardTitle"
+                htmlFor="boardName"
                 style={{ display: 'none' }}
               >
-                Board Title
+                Board Name
               </label>
               <textarea
                 className="overflow-hidden w-full bg-neutral-800  focus:text-white
                 mr-5 p-1 rounded-xs focus:bg-gray-900"
-                id="boardTitle"
+                id="boardName"
                 maxLength={50}
                 type="text"
                 ref={inputRef}
@@ -79,11 +83,11 @@ export function AddBoardForm() {
                     onFormSubmit(e)
                   }
                 }}
-                name="boardTitle"
+                name="boardName"
                 placeholder="Add a new board..."
                 required
-                value={boardTitle}
-                onChange={e => dispatch(setBoardTitle(e.target.value))}
+                value={boardName}
+                onChange={e => dispatch(setBoardName(e.target.value))}
               />
               <button
                 className="bg-neutral-800 hover:cursor-pointer hover:bg-neutral-700

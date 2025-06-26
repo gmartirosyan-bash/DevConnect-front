@@ -1,12 +1,17 @@
-import { useContext } from 'react'
-import { DashboardContext } from '../context/DashboardContext'
 import { useSelector, useDispatch } from 'react-redux'
-import { setBoardTitle } from '../redux/dashboardSlice'
+import { setBoardName, createBoard } from '../redux/dashboardSlice'
+import { useNavigate } from 'react-router-dom'
 
 function BoardEmpty() {
-  const boardTitle = useSelector(state => state.dashboard.boardTitle)
-  const { handleAddBoard } = useContext(DashboardContext)
+  const boardName = useSelector(state => state.dashboard.boardName)
+
+  const navigate = useNavigate()
   const dispatch = useDispatch()
+
+  const handleAddBoard = (e) => {
+    e.preventDefault()
+    dispatch(createBoard({ navigate }))
+  }
 
   return (
     <div className="w-full flex flex-col items-center justify-center text-center text-white px-4 py-20 bg-gradient-to-t from-green-950 to-green-700">
@@ -26,8 +31,8 @@ function BoardEmpty() {
         <form onSubmit={handleAddBoard}>
           <input
             type="text"
-            value={boardTitle}
-            onChange={e => dispatch(setBoardTitle(e.target.value))}
+            value={boardName}
+            onChange={e => dispatch(setBoardName(e.target.value))}
             placeholder="Board name"
             className="px-3 py-2 rounded bg-neutral-800 text-white border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
