@@ -30,7 +30,7 @@ Live Demo: [https://devconnect-ijff.onrender.com](https://devconnect-ijff.onrend
 ## Running Locally
 
 1. Clone the backend: [devconnect-back](https://github.com/gmartirosyan-bash/devconnect-back)
-2. Replace <username> and <password> with your MongoDB Atlas credentials in devconnect-back
+2. Replace '<username>' and \<password/> with your MongoDB Atlas credentials in devconnect-back
 MONGO_DB=mongodb+srv://<username>:<password>@cluster.mongodb.net/devconnect?retryWrites=true&w=majority
 3. Clone the frontend:
 ```bash
