@@ -1,1 +1,26 @@
-@import "tailwindcss"
+@import "tailwindcss";
+
+::-webkit-scrollbar {
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #064e3b;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #1da64f;
+  border-radius: 4px;
+  border: 2px solid #064e3b;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #22c55e;
+  cursor: pointer;
+}
+
+@keyframes slideLines {
+  0% { background-position: 0 0; }
+  100% { background-position: 100% 0; }
+}

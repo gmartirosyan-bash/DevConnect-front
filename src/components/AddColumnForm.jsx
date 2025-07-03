@@ -51,6 +51,7 @@ function AddColumnForm() {
               onClick={() => setAddColumn(prev => !prev)}
             >
               <span className="text-2xl">+</span>
+              {' '}
               Add another column
             </button>
           )

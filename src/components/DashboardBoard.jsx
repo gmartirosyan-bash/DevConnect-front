@@ -20,7 +20,7 @@ function DashboardBoard() {
   }, [sidebarOpen])
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full ">
       <div className={`bg-neutral-900 divide-y divide-neutral-500/45 text-right text-neutral-300 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-10'}`}
       >
         <div className="flex justify-between my-3 pb-3">
@@ -33,11 +33,11 @@ function DashboardBoard() {
           </button>
         </div>
         {showSidebarContent &&
-          <BoardSidebar className='relative p-3' />
+          <BoardSidebar />
         }
       </div>
-      <div className="flex flex-1 overflow-hidden">
-        {board ? <Board board={board} /> : <BoardEmpty />}
+      <div className="flex flex-1 overflow-y-hidden">
+        {board ? <Board board={board} sidebarOpen={sidebarOpen}/> : <BoardEmpty />}
       </div>
 
     </div>

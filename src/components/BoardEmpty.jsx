@@ -38,7 +38,7 @@ function BoardEmpty() {
           />
           <button
             type="submit"
-            className="bg-green-600 px-4 py-2 rounded hover:bg-green-500 hover:cursor-pointer active:bg-green-400"
+            className="bg-green-600 px-4 py-2 rounded hover:bg-green-500 hover:cursor-pointer active:bg-green-400 ml-1.5"
           >
             + Create New Board
           </button>
