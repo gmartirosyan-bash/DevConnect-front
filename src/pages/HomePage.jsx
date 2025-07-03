@@ -1,11 +1,14 @@
+import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 
 function HomePage() {
+  const user = useSelector(state => state.user.user)
+
   return (
     <div className="min-h-screen bg-neutral-900 text-white flex flex-col">
       <header className="flex justify-between items-center px-8 py-4 border-b border-neutral-700">
         <div className="flex relative">
-          <h1 className="text-xl font-bold">DevConnect</h1>
+          <h1 className="text-xl font-bold hover:text-green-500 cursor-default">DevConnect</h1>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className=" absolute left-28 w-12 h-12 pb-5 pr-3 text-green-500"
@@ -18,10 +21,14 @@ function HomePage() {
         </div>
 
         <div className="space-x-4">
-          <Link to="/login" className="text-sm hover:underline">Login</Link>
-          <Link to="/register" className="bg-green-600 px-4 py-2 rounded hover:bg-green-500 text-sm hover:cursor-pointer active:bg-green-400">
-            Sign Up
-          </Link>
+          {!user.username ?
+            <>
+              <Link to="/login" className="text-sm hover:underline">Login</Link>
+              <Link to="/register" className="bg-green-600 px-4 py-2 rounded hover:bg-green-500 text-sm hover:cursor-pointer active:bg-green-400">Sign Up</Link>
+            </>
+          :
+            <Link to="/register" className="bg-green-600 px-4 py-2 rounded hover:bg-green-500 text-sm hover:cursor-pointer active:bg-green-400">Dashboard</Link>
+          }
         </div>
       </header>
 
