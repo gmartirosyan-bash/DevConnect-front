@@ -32,7 +32,7 @@ function RegisterPage() {
       const user = await loginApi.login({ email, password })
 
       dispatch(setToken(user.token))
-      dispatch(setUser({ user: user.username, email: user.email, id: user.id}))
+      dispatch(setUser({ username: user.username, email: user.email, id: user.id}))
 
       navigate('/dashboard')
     }
