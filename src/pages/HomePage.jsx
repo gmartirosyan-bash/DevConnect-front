@@ -21,7 +21,7 @@ function HomePage() {
         </div>
 
         <div className="space-x-4">
-          {!user.username ?
+          {!user?.username ?
             <>
               <Link to="/login" className="text-sm hover:underline">Login</Link>
               <Link to="/register" className="bg-green-600 px-4 py-2 rounded hover:bg-green-500 text-sm hover:cursor-pointer active:bg-green-400">Sign Up</Link>

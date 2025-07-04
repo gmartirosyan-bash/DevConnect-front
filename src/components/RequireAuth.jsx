@@ -7,7 +7,7 @@ function RequireAuth({ children }) {
   const user = useSelector(state => state.user.user)
   const dispatch = useDispatch()
 
-  if (!token || !user || !user.username) {
+  if (!token || !user || !user?.username) {
     dispatch(logout())
     return <Navigate to="/login" replace />
   }
