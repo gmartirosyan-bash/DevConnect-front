@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { setBoardName, createBoard } from '../redux/dashboardSlice'
+import { setBoardName, createBoard } from '../../redux/dashboardSlice'
 import { useNavigate } from 'react-router-dom'
 
 function BoardEmpty() {

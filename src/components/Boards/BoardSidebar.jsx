@@ -8,11 +8,11 @@ function BoardSidebar() {
   return (
     <div className={`relative p-3 ${isLoadingBoard ? 'pointer-events-none opacity-50' : ''}`}>
       {isLoadingBoard && <div
-        className="h-1.5 w-full bg-neutral-400 bg-[length:40px_100%] bg-repeat-x rounded-md mb-8"
+        className="h-1.5 w-full bg-neutral-400 bg-[length:40px_100%] rounded-md mb-8"
         style={{
           backgroundImage:
-          'repeating-linear-gradient(125deg, rgba(0,0,0) 0, rgba(0,0,0) 2px, transparent 2px, transparent 10px)',
-          animation: 'slideLines 2s linear infinite',
+            'repeating-linear-gradient(130deg, rgba(0,0,0,0.7) 0, rgba(0,0,0,0.7) 3px, rgba(0,0,0,0) 5px, transparent 15px)',
+          animation: 'slideLines 1s linear infinite',
         }}
       ></div>}
 

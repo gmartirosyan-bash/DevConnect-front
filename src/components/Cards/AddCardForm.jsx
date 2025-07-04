@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setCardName, createCard } from '../redux/dashboardSlice'
+import { setCardName, createCard } from '../../redux/dashboardSlice'
 
 function AddCardForm({ columnId }) {
   const cardName = useSelector(state => state.dashboard.cardName)

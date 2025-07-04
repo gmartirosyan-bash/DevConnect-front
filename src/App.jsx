@@ -7,7 +7,7 @@ import RegisterPage from './pages/RegisterPage'
 import UserPage from './pages/UserPage'
 import Layout from './layouts/Layout'
 import RequireAuth from './components/RequireAuth'
-import ConfirmBox from './components/ConfirmBox'
+import ConfirmBox from './components/UI/ConfirmBox'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout, hideLogoutConfirm } from './redux/userSlice'
 

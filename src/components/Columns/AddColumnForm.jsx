@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setColumnName, createColumn } from '../redux/dashboardSlice'
+import { setColumnName, createColumn } from '../../redux/dashboardSlice'
 
 function AddColumnForm() {
   const columnName = useSelector(state => state.dashboard.columnName)

@@ -1,7 +1,7 @@
-import Cards from './Cards'
-import AddCardForm from './AddCardForm'
+import Cards from '../Cards/Cards'
+import AddCardForm from '../Cards/AddCardForm'
 import { useDispatch } from 'react-redux'
-import { renameColumn, deleteColumn } from '../redux/dashboardSlice'
+import { renameColumn, deleteColumn } from '../../redux/dashboardSlice'
 
 function Column({ column }) {
   const dispatch = useDispatch()

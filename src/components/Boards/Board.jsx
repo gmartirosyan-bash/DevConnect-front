@@ -1,7 +1,7 @@
 import BoardName from './BoardName'
-import AddColumnForm from './AddColumnForm'
-import Columns from './Columns'
-import { deleteBoard } from '../redux/dashboardSlice'
+import AddColumnForm from '../Columns/AddColumnForm'
+import Columns from '../Columns/Columns'
+import { deleteBoard } from '../../redux/dashboardSlice'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 

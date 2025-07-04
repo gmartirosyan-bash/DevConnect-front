@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { selectBoard } from '../redux/dashboardSlice'
+import { selectBoard } from '../../redux/dashboardSlice'
 
 function BoardSelect() {
   const boards = useSelector(state => state.dashboard.boards)

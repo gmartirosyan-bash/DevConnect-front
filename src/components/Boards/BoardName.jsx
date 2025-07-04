@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { renameBoard } from '../redux/dashboardSlice'
+import { renameBoard } from '../../redux/dashboardSlice'
 
 function BoardName({ className, board }) {
   const name = board.name

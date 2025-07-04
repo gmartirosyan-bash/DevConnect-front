@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { renameCard, deleteCard } from '../redux/dashboardSlice'
+import { renameCard, deleteCard } from '../../redux/dashboardSlice'
 
 function Card({ card }) {
   const dispatch = useDispatch()
