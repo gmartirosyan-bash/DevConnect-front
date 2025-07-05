@@ -35,7 +35,7 @@ function Card({ card }) {
         suppressContentEditableWarning
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className="hover:cursor-text text-sm max-w-50 text-neutral-200 font-medium whitespace-pre-wrap break-words pr-2"
+        className="hover:cursor-text text-sm max-w-40 text-neutral-200 font-medium whitespace-pre-wrap break-words px-1"
       >
         {card.name}
       </p>

@@ -2,6 +2,7 @@ import Cards from '../Cards/Cards'
 import AddCardForm from '../Cards/AddCardForm'
 import { useDispatch } from 'react-redux'
 import { renameColumn, deleteColumn } from '../../redux/dashboardSlice'
+import { Droppable } from '@hello-pangea/dnd'
 
 function Column({ column }) {
   const dispatch = useDispatch()
@@ -51,7 +52,15 @@ function Column({ column }) {
         </button>
       </div>
 
-      <Cards columnId={column.id} />
+      <Droppable droppableId={column.id}>
+        {(provided) => (
+          <div ref={provided.innerRef} {...provided.droppableProps}>
+            <Cards columnId={column.id} />
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+
       <AddCardForm columnId={column.id} />
     </div>
   )

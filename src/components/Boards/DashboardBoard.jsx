@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import BoardSidebar from './Boards/BoardSidebar'
-import BoardEmpty from './Boards/BoardEmpty'
-import Board from './Boards/Board'
+import BoardSidebar from './BoardSidebar'
+import BoardEmpty from './BoardEmpty'
+import Board from './Board'
 import { useSelector } from 'react-redux'
 
 function DashboardBoard() {

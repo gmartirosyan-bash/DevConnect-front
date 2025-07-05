@@ -10,6 +10,8 @@ export const createBoard = createAsyncThunk(
   async ({ navigate }, { getState, dispatch, rejectWithValue}) => {
     const state = getState()
     const name = state.dashboard.boardName.trim()
+    const oldColumns = state.dashboard.columns
+    const oldCards = state.dashboard.cards
 
     if (!name){
       dispatch(setAlertMsg('board name is required'))
@@ -22,19 +24,27 @@ export const createBoard = createAsyncThunk(
       name,
       optimistic: true,
     }
+    const optimisticColumns = [
+      { id: `temp-col-1-${tempId}`, name: 'To Do', boardId: tempId, optimistic: true },
+      { id: `temp-col-2-${tempId}`, name: 'Doing', boardId: tempId, optimistic: true },
+      { id: `temp-col-3-${tempId}`, name: 'Done', boardId: tempId, optimistic: true },
+    ]
 
     const newFakeBoards = [...state.dashboard.boards, optimisticBoard]
     dispatch(setBoards(newFakeBoards))
     dispatch(setBoardName(''))
-    dispatch(setColumns([]))
+    dispatch(setColumns(optimisticColumns))
     dispatch(setCards([]))
     dispatch(setIsLoadingBoard(true))
     try {
       const realBoard = await boardsApi.createBoard({ name }, state.user.token)
       dispatch(setBoards(newFakeBoards.map(board => board.id === tempId ? realBoard : board)))
+      dispatch(setColumns(realBoard.columns))
       navigate(`/dashboard/${realBoard.id}`)
     }
     catch (err) {
+      dispatch(setColumns(oldColumns))
+      dispatch(setCards(oldCards))
       dispatch(setBoards(newFakeBoards.filter(board => board.id !== tempId)))
       const message = handleApiError(err, 'Failed to create the board. Please try again')
       dispatch(setAlertMsg(message))

@@ -1,15 +1,31 @@
 import axios from 'axios'
+import { gql } from '@apollo/client'
+import client from './apolloClient'
+
+const GET_BOARDS = gql`
+  query {
+    boards {
+      id
+      name
+    }
+  }
+`
 
 const baseUrl = '/api/boards'
+
 
 function getTokenConfig(token) {
   return { headers: { Authorization: `Bearer ${token}` } }
 }
 
-async function getBoards(token) {
-  const res = await axios.get(baseUrl, getTokenConfig(token))
-  return res.data
+async function getBoards() {
+  const { data } = await client.query({ query: GET_BOARDS })
+  return data.boards
 }
+// async function getBoards(token) {
+//   const res = await axios.get(baseUrl, getTokenConfig(token))
+//   return res.data
+// }
 
 async function getFullBoard(id, token) {
   const res = await axios.get(`${baseUrl}/${id}`, getTokenConfig(token))

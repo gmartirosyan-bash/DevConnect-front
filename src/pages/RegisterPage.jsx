@@ -7,6 +7,7 @@ import CustomAlert from '../components/UI/CustomAlert'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser, setToken } from '../redux/userSlice'
 import { setAlertMsg } from '../redux/uiSlice'
+import { Eye, EyeOff} from 'lucide-react'
 
 
 function RegisterPage() {
@@ -16,6 +17,8 @@ function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [repeatPassword, setRepeatPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showRepeat, setShowRepeat] = useState(false)
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -81,32 +84,46 @@ function RegisterPage() {
             />
           </div>
 
-          <div>
+          <div className='relative'>
             <label htmlFor="password" className="block mb-1 text-sm font-medium">Password</label>
             <input
               id="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               name="password"
               autoComplete="new-password"
-              className="w-full px-4 py-2 rounded bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 pr-12 rounded bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-green-500"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
             />
+            <button
+              className='absolute right-4 top-9 hover:cursor-pointer text-neutral-500 hover:text-neutral-400 transition'
+              type='button'
+              onClick={() => setShowPassword(prev => !prev)}
+            >
+              {showPassword ? <EyeOff size={18}/> : <Eye size={18}/>}
+            </button>
           </div>
 
-          <div>
+          <div className='relative'>
             <label htmlFor="repeatPassword" className="block mb-1 text-sm font-medium">Repeat Password</label>
             <input
               id="repeatPassword"
-              type="password"
+              type={showRepeat ? 'text' : 'password'}
               name="repeatPassword"
               autoComplete="new-password"
-              className="w-full px-4 py-2 rounded bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 pr-12 rounded bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-green-500"
               value={repeatPassword}
               onChange={e => setRepeatPassword(e.target.value)}
               required
             />
+            <button
+              className='absolute right-4 top-9 hover:cursor-pointer text-neutral-500 hover:text-neutral-400 transition'
+              type='button'
+              onClick={() => setShowRepeat(prev => !prev)}
+            >
+              {showRepeat ? <EyeOff size={18}/> : <Eye size={18}/>}
+            </button>
           </div>
 
           <button

@@ -10,6 +10,7 @@ import RequireAuth from './components/RequireAuth'
 import ConfirmBox from './components/UI/ConfirmBox'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout, hideLogoutConfirm } from './redux/userSlice'
+import BoardsList from './components/BoardsList'
 
 
 function App() {
