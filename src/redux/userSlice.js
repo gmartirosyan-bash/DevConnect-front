@@ -3,7 +3,6 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   token: localStorage.getItem('token'),
   user: JSON.parse(localStorage.getItem('user')),
-  showConfirm: false,
 }
 
 const userSlice = createSlice({
@@ -24,12 +23,6 @@ const userSlice = createSlice({
       localStorage.removeItem('token')
       localStorage.removeItem('user')
     },
-    showLogoutConfirm(state) {
-      state.showConfirm = true
-    },
-    hideLogoutConfirm(state) {
-      state.showConfirm = false
-    },
   },
 })
 
@@ -37,8 +30,6 @@ export const {
   setUser,
   logout,
   setToken,
-  showLogoutConfirm,
-  hideLogoutConfirm,
 } = userSlice.actions
 
 export default userSlice.reducer

@@ -8,12 +8,15 @@ import { DragDropContext } from '@hello-pangea/dnd'
 import cardsApi from '../../api/cards'
 import handleApiError from '../../utils/handleApiError'
 import { setAlertMsg } from '../../redux/uiSlice'
+import ConfirmBox from '../UI/ConfirmBox'
+import { useState } from 'react'
 
 function Board({ board, sidebarOpen }) {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const token = useSelector(state => state.user.token)
   const cards = useSelector(state => state.dashboard.cards)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleDragEnd = async (result) => {
     const { destination, source, draggableId } = result
@@ -59,6 +62,13 @@ function Board({ board, sidebarOpen }) {
 
   return (
     <div className='flex-1 bg-gradient-to-t from-green-950 to-green-700 transition-all duration-300 custom-scrollbar'>
+      {showConfirm && (
+        <ConfirmBox
+          message="Do you want to delete the board?"
+          onConfirm={() => dispatch(deleteBoard({ boardId: board.id, navigate}))}
+          onCancel={() => setShowConfirm(false)}
+        />
+      )}
       <div className={`flex justify-between bg-blue-950/50 px-3.5 py-2.5 absolute right-0 transition-all duration-300 ${sidebarOpen ? 'left-64' : 'left-10'}`} >
         <BoardName
           className="hover:cursor-text text-white/75 font-sm text-lg"
@@ -66,7 +76,7 @@ function Board({ board, sidebarOpen }) {
         <button
           className="group text-neutral-300 bg-neutral-800 py-1 px-2 text-sm hover:cursor-pointer hover:bg-neutral-900 active:bg-neutral-800 active:text-red-700 rounded-md"
           type="button"
-          onClick={() => dispatch(deleteBoard({ boardId: board.id, navigate}))}
+          onClick={() => setShowConfirm(true)}
         >
           Delete board
           <span className="font-mono group-hover:text-red-700 text-lg m-0 px-1">&times;</span>

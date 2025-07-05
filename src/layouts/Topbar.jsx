@@ -1,18 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Home, LayoutDashboard, Settings, Users, LogOut } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
-import { showLogoutConfirm } from '../redux/userSlice'
+import { logout } from '../redux/userSlice'
+import ConfirmBox from '../components/UI/ConfirmBox'
 
 function Topbar() {
   const user = useSelector(state => state.user.user)
 
   const [menuOpen, setMenuOpen] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const menuRef = useRef(null)
   
   const dispatch = useDispatch()
-
+  const navigate = useNavigate()
+  
   useEffect(() => {
     if (menuOpen) {
       const handleClickOutside = (e) => {
@@ -29,6 +32,13 @@ function Topbar() {
 
   return (
     <div className="flex items-center justify-between p-2 bg-neutral-800 text-white">
+      {showConfirm && (
+        <ConfirmBox
+          message="Do you want to log out?"
+          onConfirm={() => {navigate('/login'); dispatch(logout())}}
+          onCancel={() => setShowConfirm(false)}
+        />
+      )}
       <div>
         <Link to="/"><Home size={24} className=" hover:text-blue-400 inline mr-2" /></Link>
         <Link to="/Dashboard"><LayoutDashboard className="text-white hover:text-green-400 active:text-green-500 inline" size={24} /></Link>
@@ -63,11 +73,11 @@ function Topbar() {
                     User Settings
                   </li>
                 </Link>
-                <li className="px-3.5 py-2.5 hover:cursor-pointer hover:bg-neutral-700 active:bg-neutral-600" onClick={() => dispatch(showLogoutConfirm())}>
+                <li className="px-3.5 py-2.5 hover:cursor-pointer hover:bg-neutral-700 active:bg-neutral-600" onClick={() => setShowConfirm(true)}>
                   <Users className="inline mr-2" size={20} />
                   Switch accounts
                 </li>
-                <li className="px-3.5 pt-2.5 pb-4 hover:cursor-pointer hover:bg-neutral-700 active:bg-neutral-600 group" onClick={() => dispatch(showLogoutConfirm())}>
+                <li className="px-3.5 pt-2.5 pb-4 hover:cursor-pointer hover:bg-neutral-700 active:bg-neutral-600 group" onClick={() => setShowConfirm(true)}>
                   <LogOut className="inline mr-2 group-hover:text-red-800" size={20} />
                   Log out
                 </li>

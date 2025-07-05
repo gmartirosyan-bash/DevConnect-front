@@ -7,35 +7,18 @@ import RegisterPage from './pages/RegisterPage'
 import UserPage from './pages/UserPage'
 import Layout from './layouts/Layout'
 import RequireAuth from './components/RequireAuth'
-import ConfirmBox from './components/UI/ConfirmBox'
-import { useSelector, useDispatch } from 'react-redux'
-import { logout, hideLogoutConfirm } from './redux/userSlice'
+import { useSelector } from 'react-redux'
 import BoardsList from './components/BoardsList'
 
 
 function App() {
-  const dispatch = useDispatch()
   const token = useSelector(state => state.user.token)
-  const showConfirm = useSelector(state => state.user.showConfirm)
 
-  const confirmLogout = () => {
-    dispatch(hideLogoutConfirm())
-    dispatch(logout())
-  }
 
   return (
     <>
-      {showConfirm && (
-        <ConfirmBox
-          message="Do you want to log out?"
-
-          onConfirm={confirmLogout}
-          onCancel={() => dispatch(hideLogoutConfirm())}
-        />
-      )}
       <Routes>
         <Route path="/" element={<HomePage />} />
-
         <Route path="/login" element={token ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
         <Route path="/register" element={token ? <Navigate to="/dashboard" replace /> : <RegisterPage />} />
         <Route element={<RequireAuth><Layout /></RequireAuth>}>
