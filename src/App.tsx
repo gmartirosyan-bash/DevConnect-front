@@ -6,14 +6,12 @@ import NotFoundPage from './pages/NotFoundPage'
 import RegisterPage from './pages/RegisterPage'
 import UserPage from './pages/UserPage'
 import Layout from './layouts/Layout'
-import RequireAuth from './components/RequireAuth'
+import RequireAuth from './components/UI/RequireAuth'
 import { useSelector } from 'react-redux'
-import BoardsList from './components/BoardsList'
-
+import type { RootState } from './redux/store'
 
 function App() {
-  const token = useSelector(state => state.user.token)
-
+  const token = useSelector((state: RootState) => state.user.token)
 
   return (
     <>
@@ -26,7 +24,6 @@ function App() {
           <Route path="/dashboard/:boardId" element={<DashboardPage />} />
           <Route path="/user" element={<UserPage />} />
         </Route>
-
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>

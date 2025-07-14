@@ -12,7 +12,7 @@ function Cards({ columnId }) {
   return (
     <div>
       {filteredSortedCards.map((card, index) => (
-        <Draggable key={card.id} draggableId={card.id} index={index}>
+        <Draggable key={card.id} draggableId={card.id} index={index} isDragDisabled={!!card.optimistic}>
           {(provided) => (
             <div
               ref={provided.innerRef}

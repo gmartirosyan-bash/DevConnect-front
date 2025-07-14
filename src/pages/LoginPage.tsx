@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, FormEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import loginApi from '../api/login'
 import handleApiError from '../utils/handleApiError'
@@ -7,18 +7,19 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setUser, setToken } from '../redux/userSlice'
 import { setAlertMsg } from '../redux/uiSlice'
 import { Eye, EyeOff} from 'lucide-react'
+import { RootState, AppDispatch } from '../redux/store'
 
 function LoginPage() {
-  const alertMsg = useSelector(state => state.ui.alertMsg)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
+  const alertMsg = useSelector((state: RootState) => state.ui.alertMsg)
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [showPassword, setShowPassword] = useState<boolean>(false)
 
   const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const dispatch: AppDispatch = useDispatch()
 
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault()
     if (!email || !password)
       return dispatch(setAlertMsg('All fields must be filled'))

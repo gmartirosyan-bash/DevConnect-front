@@ -4,22 +4,23 @@ import { Home, LayoutDashboard, Settings, Users, LogOut } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../redux/userSlice'
 import ConfirmBox from '../components/UI/ConfirmBox'
+import { RootState, AppDispatch } from '../redux/store'
 
 function Topbar() {
-  const user = useSelector(state => state.user.user)
+  const user = useSelector((state: RootState) => state.user.user)
 
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
+  const [menuOpen, setMenuOpen] = useState<boolean>(false)
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
 
-  const menuRef = useRef(null)
+  const menuRef = useRef<HTMLDivElement | null>(null)
   
-  const dispatch = useDispatch()
+  const dispatch: AppDispatch = useDispatch()
   const navigate = useNavigate()
   
   useEffect(() => {
     if (menuOpen) {
-      const handleClickOutside = (e) => {
-        if (menuRef.current && !menuRef.current.contains(e.target)) {
+      const handleClickOutside = (e: MouseEvent): void => {
+        if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
           setMenuOpen(false)
         }
       }
@@ -29,6 +30,8 @@ function Topbar() {
       }
     }
   }, [menuOpen])
+
+  if (!user) return null
 
   return (
     <div className="flex items-center justify-between p-2 bg-neutral-800 text-white">
@@ -41,7 +44,7 @@ function Topbar() {
       )}
       <div>
         <Link to="/"><Home size={24} className=" hover:text-blue-400 inline mr-2" /></Link>
-        <Link to="/Dashboard"><LayoutDashboard className="text-white hover:text-green-400 active:text-green-500 inline" size={24} /></Link>
+        <Link to="/dashboard"><LayoutDashboard className="text-white hover:text-green-400 active:text-green-500 inline" size={24} /></Link>
       </div>
       <div ref={menuRef} className="relative">
         <div onClick={() => setMenuOpen(open => !open)}>

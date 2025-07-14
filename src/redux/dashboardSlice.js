@@ -12,30 +12,34 @@ export const createBoard = createAsyncThunk(
     const name = state.dashboard.boardName.trim()
     const oldColumns = state.dashboard.columns
     const oldCards = state.dashboard.cards
-
     if (!name){
       dispatch(setAlertMsg('board name is required'))
       return rejectWithValue('Board name is required') 
     }
 
-    const tempId = `temp-${Date.now()}`
-    const optimisticBoard = {
-      id: tempId,
-      name,
-      optimistic: true,
-    }
+    const tempId = `opt-temp-${Date.now()}`
     const optimisticColumns = [
       { id: `temp-col-1-${tempId}`, name: 'To Do', boardId: tempId, optimistic: true },
       { id: `temp-col-2-${tempId}`, name: 'Doing', boardId: tempId, optimistic: true },
       { id: `temp-col-3-${tempId}`, name: 'Done', boardId: tempId, optimistic: true },
     ]
-
+    const optimisticBoard = {
+      id: tempId,
+      name,
+      owner: state.user.user.id,
+      columns: optimisticColumns,
+      optimistic: true,
+    }
+    
     const newFakeBoards = [...state.dashboard.boards, optimisticBoard]
+    dispatch(setBoardId(tempId))
+    dispatch(setBoard(optimisticBoard))
     dispatch(setBoards(newFakeBoards))
     dispatch(setBoardName(''))
     dispatch(setColumns(optimisticColumns))
     dispatch(setCards([]))
     dispatch(setIsLoadingBoard(true))
+    navigate(`/dashboard/${tempId}`)
     try {
       const realBoard = await boardsApi.createBoard({ name }, state.user.token)
       dispatch(setBoards(newFakeBoards.map(board => board.id === tempId ? realBoard : board)))

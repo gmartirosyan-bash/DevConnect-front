@@ -7,19 +7,30 @@ import DashboardBoard from '../components/Boards/DashboardBoard'
 import { useSelector, useDispatch } from 'react-redux'
 import { setBoards, setColumns, setCards, setBoardId, setBoard } from '../redux/dashboardSlice'
 import { setLoading, setAlertMsg } from '../redux/uiSlice'
+import { RootState, AppDispatch } from '../redux/store'
+
+interface Board {
+  id: string
+  name: string
+  owner: string
+  columns: string[]
+}
 
 function DashboardPage() {
-  const token = useSelector(state => state.user.token)
-  const boards = useSelector(state => state.dashboard.boards)
-  const loading = useSelector(state => state.ui.loading)
-  const alertMsg = useSelector(state => state.ui.alertMsg)
+  const token = useSelector((state: RootState) => state.user.token)
+  const boards = useSelector((state: RootState) => state.dashboard.boards as Board[])
+  const loading = useSelector((state: RootState) => state.ui.loading as boolean)
+  const alertMsg = useSelector((state: RootState) => state.ui.alertMsg as string | null)
 
-  const { boardId } = useParams()
-  const dispatch = useDispatch()
+  const { boardId } = useParams<{ boardId?: string }>()
+  const dispatch: AppDispatch = useDispatch()
 
   useEffect(() => {
+    if(boards.some(board => board.id.includes('opt')) || boardId?.includes('opt'))
+      return
     if(boardId){
-      dispatch(setBoard(boards.find(b => b.id === boardId)))
+      const board = boards.find(b => b.id === boardId)
+      dispatch(setBoard(board ?? null))
       dispatch(setBoardId(boardId))
     }
     else{
@@ -33,7 +44,7 @@ function DashboardPage() {
   useEffect(() => {
     if (!token)
       return
-    const fetchBoards = async () => {
+    const fetchBoards = async (): Promise<void> => {
       dispatch(setLoading(true))
       try {
         const data = await boardsApi.getBoards(token)
@@ -53,7 +64,7 @@ function DashboardPage() {
   useEffect(() => {
     if (!boardId || !token)
       return
-    const fetchBoard = async () => {
+    const fetchBoard = async (): Promise<void> => {
       try {
         const data = await boardsApi.getFullBoard(boardId, token)
         dispatch(setColumns(data.columns))

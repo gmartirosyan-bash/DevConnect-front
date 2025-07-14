@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import loginApi from '../api/login'
 import usersApi from '../api/users'
@@ -8,27 +8,28 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setUser, setToken } from '../redux/userSlice'
 import { setAlertMsg } from '../redux/uiSlice'
 import { Eye, EyeOff} from 'lucide-react'
+import { RootState, AppDispatch } from '../redux/store'
 
 
 function RegisterPage() {
-  const alertMsg = useSelector(state => state.ui.alertMsg)
+  const alertMsg = useSelector((state: RootState) => state.ui.alertMsg as string | null)
 
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [repeatPassword, setRepeatPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [showRepeat, setShowRepeat] = useState(false)
+  const [username, setUsername] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [repeatPassword, setRepeatPassword] = useState<string>('')
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [showRepeat, setShowRepeat] = useState<boolean>(false)
 
   const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const dispatch: AppDispatch = useDispatch()
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e: FormEvent) => {
     e.preventDefault()
-    if (password !== repeatPassword)
-      return dispatch(setAlertMsg('Passwords don\'t match'))
     if (!password || !email || !username)
       return dispatch(setAlertMsg('Every field must be filled'))
+    if (password !== repeatPassword)
+      return dispatch(setAlertMsg('Passwords don\'t match'))
 
     try {
       await usersApi.createUser({ username, email, password })

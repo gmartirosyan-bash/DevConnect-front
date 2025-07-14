@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { logout } from '../redux/userSlice'
+import { logout } from '../../redux/userSlice'
 
 function RequireAuth({ children }) {
   const token = useSelector(state => state.user.token)

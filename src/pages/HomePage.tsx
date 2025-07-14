@@ -1,8 +1,9 @@
 import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
+import { RootState } from '../redux/store'
 
 function HomePage() {
-  const user = useSelector(state => state.user.user)
+  const user = useSelector((state: RootState) => state.user.user)
 
   return (
     <div className="min-h-screen bg-neutral-900 text-white flex flex-col">

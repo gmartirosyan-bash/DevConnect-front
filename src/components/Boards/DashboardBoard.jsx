@@ -18,7 +18,6 @@ function DashboardBoard() {
       setShowSidebarContent(false)
     }
   }, [sidebarOpen])
-
   return (
     <div className="flex h-full ">
       <div className={`bg-neutral-900 divide-y divide-neutral-500/45 text-right text-neutral-300 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-10'}`}

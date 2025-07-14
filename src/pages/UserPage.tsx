@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 import usersApi from '../api/users'
 import handleApiError from '../utils/handleApiError'
 import { X, Check } from 'lucide-react'
@@ -6,33 +6,37 @@ import CustomAlert from '../components/UI/CustomAlert'
 import { useSelector, useDispatch } from 'react-redux'
 import { setUser, logout } from '../redux/userSlice'
 import { setAlertMsg } from '../redux/uiSlice'
+import { RootState, AppDispatch } from '../redux/store'
+
+export interface EditUserPayload {
+  username?: string
+  email?: string
+}
 
 function UserPage() {
-  const token = useSelector(state => state.user.token)
-  const user = useSelector(state => state.user.user)
-  const alertMsg = useSelector(state => state.ui.alertMsg)
+  const { user, token } = useSelector((state: RootState) => state.user)
+  const alertMsg = useSelector((state: RootState) => state.ui.alertMsg as string | null)
 
-  const [newUsername, setNewUsername] = useState('')
-  const [newEmail, setNewEmail] = useState('')
-  const [showConfirm, setShowConfirm] = useState(false)
+  const [newUsername, setNewUsername] = useState<string>('')
+  const [newEmail, setNewEmail] = useState<string>('')
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
 
-  const dispatch = useDispatch()
+  const dispatch: AppDispatch = useDispatch()
 
-  const handleUserEdit = async (e, arg) => {
+  if (!user) return null
+
+  const handleUserEdit = async (e: FormEvent, arg: 'username' | 'email'): Promise<void> => {
     e.preventDefault()
     try {
-      if (arg === 'username') {
-        await usersApi.editUser(user.id, { username: newUsername }, token)
-        const updatedUser = { ...user, username: newUsername }
-        dispatch(setUser(updatedUser))
-        setNewUsername('')
-      }
-      else if (arg === 'email') {
-        await usersApi.editUser(user.id, { email: newEmail }, token)
-        const updatedUser = { ...user, email: newEmail }
-        dispatch(setUser(updatedUser))
-        setNewEmail('')
-      }
+      let payload: EditUserPayload = {}
+      if (arg === 'username') payload.username = newUsername
+      else if (arg === 'email') payload.email = newEmail
+
+      await usersApi.editUser(user.id, payload, token)
+      const updatedUser = { ...user, ...payload}
+      dispatch(setUser(updatedUser))
+      if (payload.username) setNewUsername('')
+      else if (payload.email) setNewEmail('')
     }
     catch (err) {
       const message = handleApiError(err, 'Failed to change email or username. Please try again')
@@ -40,14 +44,14 @@ function UserPage() {
     }
   }
 
-  const handleClose = (arg) => {
+  const handleClose = (arg: 'username' | 'email'): void => {
     if (arg === 'username')
       setNewUsername('')
     if (arg === 'email')
       setNewEmail('')
   }
 
-  const onDelete = async () => {
+  const onDelete = async (): Promise<void> => {
     try {
       await usersApi.deleteUser(user.id, token)
       dispatch(logout())
